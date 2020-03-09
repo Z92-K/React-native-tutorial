@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text,TouchableOpacity, View } from 'react-native';
 import logo from './assets/zan.jpg'; 
 import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
 
 
 export default function App() {
@@ -22,6 +23,14 @@ export default function App() {
     setSelectedImage({ localUri: pickerResult.uri });
   };
 
+  let openShareDialogAsync = async () => {
+    if (!(await Sharing.isAvailableAsync())) {
+      alert(`Uh oh, sharing isn't available on your platform`);
+      return;
+    }
+
+    Sharing.shareAsync(selectedImage.localUri);
+  }
   if (selectedImage !== null) {
     return (
       <View style={styles.container}>
@@ -37,10 +46,9 @@ export default function App() {
     <View style={styles.container}>
       <Image source={logo} style={{ width: 305, height: 159 }} />
       <Text style={{color: '#888', fontSize: 18}} > Why doesn't it work!?</Text>
-      <TouchableOpacity
-        onPress={openImagePickerAsync}  style={styles.button}>
-        <Text style={styles.buttonText}> Pick a photo</Text>
-      </TouchableOpacity>
+      <TouchableOpacity onPress={openShareDialogAsync} style={styles.button}>
+          <Text style={styles.buttonText}>Share this photo</Text>
+        </TouchableOpacity>
     </View>
   );
 }
